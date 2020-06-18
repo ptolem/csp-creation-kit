@@ -27,3 +27,25 @@ icacls.exe $path /inheritance:r
 Note: If you are using Windows, ensure you have [OpenSSH](https://www.howtogeek.com/336775/how-to-enable-and-use-windows-10s-built-in-ssh-commands/) 
 
 TODO: Using Visual Studio Code Remote - SSH extension.
+
+### Running nodes
+Note the public IP of the core and relay VMs from the provisioning. Ensure the topology.json of the core node only has the relay node IP address and the relay node has both the core and the Cardano relay node.
+ 
+#### Relay
+```
+cardano-node run --topology $HOME/pool/relay/ff-topology.json \
+                 --database-path $HOME/pool/relay/db/ \
+                 --socket-path $HOME/pool/relay/db/node.socket \
+                 --host-addr 127.0.0.1 \
+                 --port 3003 \
+                 --config $HOME/pool/relay/ff-config.json
+```
+#### Core
+```
+cardano-node run --topology $HOME/pool/core/ff-topology.json \
+                 --database-path $HOME/pool/core/db/ \
+                 --socket-path $HOME/pool/core/db/node.socket \
+                 --host-addr 127.0.0.1 \
+                 --port 3000 \
+                 --config $HOME/pool/core/ff-config.json
+```

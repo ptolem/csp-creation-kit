@@ -14,11 +14,8 @@ tar -xf cabal-install-3.2.0.0-x86_64-unknown-linux.tar.xz
 rm cabal-install-3.2.0.0-x86_64-unknown-linux.tar.xz cabal.sig
 mkdir -p ~/.local/bin
 mv cabal ~/.local/bin/
-echo 'export PATH="~/.cabal/bin:$PATH"' >> ~/.bashrc
-echo 'export PATH="~/.local/bin:$PATH"' >> ~/.bashrc
-source ~/.bashrc
-cabal update
-cabal user-config update
+~/.local/bin/cabal update
+~/.local/bin/cabal user-config update
 
 # GHC
 wget https://downloads.haskell.org/~ghc/8.6.5/ghc-8.6.5-x86_64-deb9-linux.tar.xz
@@ -36,7 +33,7 @@ git clone https://github.com/input-output-hk/cardano-node.git
 cd cardano-node
 git fetch --all --tags
 git checkout tags/1.13.0
-cabal install cardano-node cardano-cli --installdir="~/.local/bin/" # Takes 15+ mins
+~/.local/bin/cabal install cardano-node cardano-cli --installdir="$HOME/.local/bin/" # Takes 15+ mins first time around
 
 # Pool setup
 cd $HOME
@@ -50,3 +47,7 @@ mkdir relay
 cp ff* core/
 cp ff* relay/
 rm ff*
+
+# PATH update
+echo 'export PATH="~/.cabal/bin:$PATH"' >> ~/.bashrc
+echo 'export PATH="~/.local/bin:$PATH"' >> ~/.bashrc

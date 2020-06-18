@@ -184,7 +184,6 @@ resource "tls_private_key" "sshkey" {
   algorithm = "RSA"
   rsa_bits = 4096
 }
-output "tls_private_key" { value = "${tls_private_key.sshkey.private_key_pem}" }
 
 # Create virtual machines
 resource "azurerm_linux_virtual_machine" "corevm" {
@@ -265,13 +264,55 @@ resource "azurerm_linux_virtual_machine" "relayvm" {
     }
 }
 
-output "core_ip_address" {
+# resource "azurerm_virtual_machine_extension" "corevminitscript" {
+#     name                 = "${azurerm_linux_virtual_machine.corevm.name}-initscript-ext"
+#     virtual_machine_id   = azurerm_linux_virtual_machine.corevm.id
+#     publisher            = "Microsoft.Azure.Extensions"
+#     type                 = "CustomScript"
+#     type_handler_version = "2.0"
+#     settings = <<SETTINGS
+#     {
+#         "script": "${base64encode(file("../init/common.sh"))}"
+#     }
+#     SETTINGS
+#     tags = {
+#         platform = var.tag-platform
+#         stage = var.tag-stage
+#         data-classification = var.tag-data-classification
+#     }
+# }
+
+# resource "azurerm_virtual_machine_extension" "relayvminitscript" {
+#     name                 = "${azurerm_linux_virtual_machine.relayvm.name}-initscript-ext"
+#     virtual_machine_id   = azurerm_linux_virtual_machine.relayvm.id
+#     publisher            = "Microsoft.Azure.Extensions"
+#     type                 = "CustomScript"
+#     type_handler_version = "2.0"
+#     settings = <<SETTINGS
+#     {
+#         "script": "${base64encode(file("../init/common.sh"))}"
+#     }
+#     SETTINGS
+#     tags = {
+#         platform = var.tag-platform
+#         stage = var.tag-stage
+#         data-classification = var.tag-data-classification
+#     }
+# }
+
+output "sshpvk" { 
+    value = "${tls_private_key.sshkey.private_key_pem}" 
+    description = "SSH private key"
+    sensitive   = false
+}
+
+output "cpip" {
   value       = azurerm_public_ip.corepip.ip_address
   description = "Core VM Public IP Address"
   sensitive   = false
 }
 
-output "relay_ip_address" {
+output "rpip" {
   value       = azurerm_public_ip.relaypip.ip_address
   description = "Relay VM Public IP Address"
   sensitive   = false
