@@ -1,4 +1,4 @@
-# SAFESTAK [SAFE] CARDANO STAKEPOOL CREATION KIT
+# SafeStak [SAFE] Cardano Stake Pool Creation Kit
 
 ## Goals
  - Define a declarative representation of cloud infrastructure to host a Cardano stake pool. 
@@ -30,6 +30,5 @@ Assuming you are currently in the `prov` folder:
  - Run `terraform init`
  - Run `terraform plan -var-file spool-vars.tfvars`
  - If the output looks good, run `terraform apply -var-file spool-vars.tfvars -auto-approve`
+ - This will take about 10 minutes to provision the whole infrastructure. Please refer to the [initialisation scripts](./init/README.md) on how to set up the nodes. 
 
-## Executing Initialisation Scripts
-In an effort to save time setting up the VMs to run the Cardano stake pool I have created initialisation scripts in `init/common.sh` but please use it with caution!

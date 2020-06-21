@@ -1,6 +1,6 @@
 # Configure the Microsoft Azure Provider
 provider "azurerm" {
-    version = "~>2.0"
+    version = "~> 2.1.0" 
     features {}
 }
 
@@ -33,7 +33,7 @@ resource "azurerm_subnet" "snet" {
     name                 = "${var.resource-prefix}-vnet-snet-nodes"
     resource_group_name  = azurerm_resource_group.rg.name
     virtual_network_name = azurerm_virtual_network.vnet.name
-    address_prefixes       = ["10.0.1.0/24"]
+    address_prefix       = "10.0.1.0/24"
 }
 
 # Create Public IPs
@@ -74,7 +74,18 @@ resource "azurerm_network_security_group" "corensg" {
         protocol                   = "Tcp"
         source_port_range          = "*"
         destination_port_range     = "22"
-        source_address_prefix      = "*"
+        source_address_prefix      = var.ssh-whitelist
+        destination_address_prefix = "*"
+    }
+    security_rule {
+        name                       = "relay-in"
+        priority                   = 1002
+        direction                  = "Inbound"
+        access                     = "Allow"
+        protocol                   = "Tcp"
+        source_port_range          = "*"
+        destination_port_range     = var.core-node-port
+        source_address_prefix      = azurerm_public_ip.relaypip.ip_address
         destination_address_prefix = "*"
     }
     tags = {
@@ -96,17 +107,17 @@ resource "azurerm_network_security_group" "relaynsg" {
         protocol                   = "Tcp"
         source_port_range          = "*"
         destination_port_range     = "22"
-        source_address_prefix      = "*"
+        source_address_prefix      = var.ssh-whitelist
         destination_address_prefix = "*"
     }
     security_rule {
-        name                       = "relay-inbound"
+        name                       = "relay-in"
         priority                   = 1002
         direction                  = "Inbound"
         access                     = "Allow"
         protocol                   = "Tcp"
         source_port_range          = "*"
-        destination_port_range     = var.relayvm-node-port
+        destination_port_range     = var.relay-node-port
         source_address_prefix      = "*"
         destination_address_prefix = "*"
     }
