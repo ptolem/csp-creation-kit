@@ -34,6 +34,12 @@ cd $HOME
 mkdir -p ws
 cd ws
 git clone https://github.com/ptolem/csp-creation-kit
-cd csp-creation-kit
+cd csp-creation-kit/init
 bash common.sh
 ```
+
+### Relay nodes
+`bash relay.sh` and edit the ff-topology.json file to ensure it follows the template in [ff-topology-relay.jsont](./ff-topology-relay.jsont). 
+
+### Core nodes
+`bash core.sh`and edit the ff-topology.json file to ensure it follows the template in [ff-topology-relay.jsont](./ff-topology-core.jsont). 

@@ -8,22 +8,30 @@ Note the public IP of the core and relay VMs from the provisioning. Ensure the t
 
 ## Relay
 ```
-cardano-node run --topology $HOME/cardano-node/ff-topology.json \
-                 --database-path $HOME/cardano-node/db/ \
-                 --socket-path $HOME/cardano-node/db/node.socket \
-                 --host-addr 0.0.0.0 \
-                 --port 3002 \
-                 --config $HOME/cardano-node/ff-config.json
+cardano-node run \
+  --topology $HOME/cardano-node/config/ff-topology.json \
+  --database-path $HOME/cardano-node/db/ \
+  --socket-path $HOME/cardano-node/socket/node.socket \
+  --host-addr 0.0.0.0 \
+  --port 3001 \
+  --config $HOME/cardano-node/config/ff-config.json
 ```
 ### Core
 ```
-cardano-node run --topology $HOME/core-node/ff-topology.json \
-                 --database-path $HOME/core-node/db/ \
-                 --socket-path $HOME/core-node/db/node.socket \
-                 --host-addr 127.0.0.1 \
-                 --port 3000 \
-                 --config $HOME/core-node/core/ff-config.json
+cardano-node run \
+  --topology $HOME/cardano-node/config/ff-topology.json \
+  --database-path $HOME/cardano-node/db/ \
+  --socket-path $HOME/cardano-node/socket/node.socket \
+  --host-addr 127.0.0.1 \
+  --port 3000 \
+  --config $HOME/cardano-node/config/ff-config.json
 ```
 
-### Troubleshooting
-Using commands to check that the ndoes are running and listening https://www.cyberciti.biz/faq/unix-linux-check-if-port-is-in-use-command/
+## Troubleshooting
+Some guidance from [this article](https://www.cyberciti.biz/faq/what-process-has-open-linux-port/).
+### Get Process Info
+`ps aux | grep cardano`
+### Get Network Status
+`sudo ss -tulpn | grep 3000` or `netstat -tulpn | grep 3000` or `lsof -i :3000`
+
+### TODO: systemd
