@@ -1,9 +1,9 @@
 # SafeStak [SAFE] Cardano Stake Pool Creation Kit
 
 ## Goals
- - Define a declarative representation of cloud infrastructure to host a Cardano stake pool. 
- - Write a set of core scripts to setup and initialise the cardano node software on the cloud VMs 
- - Document the process of provisioning the infrastructure and get the pool up and running.
+ - Define an executable declarative representation of cloud infrastructure to host a [Cardano](https://cardano.org/en/what-is-cardano/) stake pool 
+ - Write a set of scripts to setup and initialise Cardano core and relay nodes on the cloud VMs 
+ - Document the whole process and share it with the community to expand and strengthen the Cardano blockchain network
 
 ## Prerequisites (Windows 10)
  - **Azure CLI** [here](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli-windows?view=azure-cli-latest#install-or-update)
@@ -32,3 +32,10 @@ Assuming you are currently in the `prov` folder:
  - If the output looks good, run `terraform apply -var-file spool-vars.tfvars -auto-approve`
  - This will take about 10 minutes to provision the whole infrastructure. Please refer to the [initialisation scripts](./init/README.md) on how to set up the nodes. 
 
+## Was this useful?
+I hope this guide can help many others get their first Cardano stake pool up and running. I truly believe that the more people we have contributing to the community the quicker this ecosystem can truly realise its tremendous potential.
+
+### How you can contribute
+Stake to the `SAFE` [SafeStak Staking Pool](https://www.safestak.com)
+
+Donate some ADA to `DdzFFzCqrhstoeh312o7AySdVMRyB5PpferbUcTEHqq6XXfs51qLGQWJeVjK3q5GovyF22wkit5eQbUKDH5u6ZrqsHtu8sSkPy1ZEQDh`

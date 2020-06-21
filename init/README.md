@@ -42,4 +42,4 @@ bash common.sh
 `bash relay.sh` and edit the ff-topology.json file to ensure it follows the template in [ff-topology-relay.jsont](./ff-topology-relay.jsont). 
 
 ### Core nodes
-`bash core.sh`and edit the ff-topology.json file to ensure it follows the template in [ff-topology-relay.jsont](./ff-topology-core.jsont). 
+`bash core.sh` and edit the ff-topology.json file to ensure it follows the template in [ff-topology-relay.jsont](./ff-topology-core.jsont). 

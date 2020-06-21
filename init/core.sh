@@ -13,7 +13,9 @@ sed -i 's/"TraceBlockFetchDecisions": false/"TraceBlockFetchDecisions": true/g' 
 sed -i 's/"ViewMode": "SimpleView"/"ViewMode": "LiveView"/g' ff-config.json
 
 # Create Keys and Addresses
-cd ~/ws/cardano-node
+cd $HOME
+mkdir -p wallets/spool
+cd ~/wallets/spool
 cardano-cli shelley address key-gen --verification-key-file payment.vkey --signing-key-file payment.skey
 cardano-cli shelley stake-address key-gen --verification-key-file stake.vkey --signing-key-file stake.skey
 cardano-cli shelley address build \
