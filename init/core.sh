@@ -1,23 +1,19 @@
 #!/bin/bash
 # Note: One-off execution only! Do not run more than once even in case of failures
 
-# Node setup
-cd $HOME
-mkdir -p cardano-node/config
-mkdir -p cardano-node/socket
-cd cardano-node/config
-wget https://hydra.iohk.io/job/Cardano/cardano-node/cardano-deployment/latest-finished/download/1/ff-topology.json
-wget https://hydra.iohk.io/job/Cardano/cardano-node/cardano-deployment/latest-finished/download/1/ff-genesis.json
-wget https://hydra.iohk.io/job/Cardano/cardano-node/cardano-deployment/latest-finished/download/1/ff-config.json
-sed -i 's/"TraceBlockFetchDecisions": false/"TraceBlockFetchDecisions": true/g' ff-config.json
-sed -i 's/"ViewMode": "SimpleView"/"ViewMode": "LiveView"/g' ff-config.json
-
-# Create Keys and Addresses
+# create vital keys and addresses
+echo '========================================================='
+echo 'Creating Keys and Addresses'
+echo '========================================================='
 cd $HOME
 mkdir -p wallets/spool
 cd ~/wallets/spool
-cardano-cli shelley address key-gen --verification-key-file payment.vkey --signing-key-file payment.skey
-cardano-cli shelley stake-address key-gen --verification-key-file stake.vkey --signing-key-file stake.skey
+cardano-cli shelley address key-gen \
+ --verification-key-file payment.vkey \
+ --signing-key-file payment.skey
+cardano-cli shelley stake-address key-gen \
+ --verification-key-file stake.vkey \
+ --signing-key-file stake.skey
 cardano-cli shelley address build \
  --payment-verification-key-file payment.vkey \
  --stake-verification-key-file stake.vkey \
@@ -28,4 +24,51 @@ cardano-cli shelley stake-address build \
  --out-file stake.addr \
  --testnet-magic 42
 
-echo 'export CARDANO_NODE_SOCKET_PATH=~/cardano-node/socket/node.socket​' >> ~/.bashrc
+# query generated address
+echo '========================================================='
+echo 'Showing details of payment.addr'
+echo '========================================================='​
+export CARDANO_NODE_SOCKET_PATH=~/cardano-node/socket/node.socket
+cardano-cli shelley query utxo \
+ --address $(cat payment.addr) \
+ --testnet-magic 42
+
+# faucet (only for shelley testnet)
+echo '========================================================='
+echo 'Getting the loot from the faucet'
+echo '========================================================='
+curl -v -XPOST "https://faucet.ff.dev.cardano.org/send-money/$(cat payment.addr)"
+
+# secondary payment address
+echo '========================================================='
+echo 'Creating Secondary Key and Addresses'
+echo '========================================================='
+cardano-cli shelley address key-gen \
+ --verification-key-file payment2.vkey \
+ --signing-key-file payment2.skey
+cardano-cli shelley address build \
+ --payment-verification-key-file payment2.vkey \
+ --stake-verification-key-file stake.vkey \
+ --out-file payment2.addr \
+ --testnet-magic 42
+
+echo '========================================================='
+echo 'Getting Protocol Parameters'
+echo '========================================================='
+cardano-cli shelley query protocol-parameters \
+   --testnet-magic 42 \
+   --out-file protocol.json
+
+echo '========================================================='
+echo 'Querying the tip of the blockchain'
+echo '========================================================='
+cardano-cli shelley query tip --testnet-magic 42
+
+# query generated address
+echo '========================================================='
+echo 'Showing details of payment.addr'
+echo '========================================================='
+cardano-cli shelley query utxo \
+ --address $(cat payment.addr) \
+ --testnet-magic 42
+ 
