@@ -32,21 +32,8 @@ cd ws
 git clone https://github.com/input-output-hk/cardano-node.git
 cd cardano-node
 git fetch --all --tags
-git checkout tags/1.13.0
+git checkout tags/1.13.0-rewards
 ~/.local/bin/cabal install cardano-node cardano-cli --installdir="$HOME/.local/bin/" # Takes 15+ mins first time around
-
-# Pool setup
-cd $HOME
-mkdir pool
-cd pool
-wget https://hydra.iohk.io/job/Cardano/cardano-node/cardano-deployment/latest-finished/download/1/ff-topology.json
-wget https://hydra.iohk.io/job/Cardano/cardano-node/cardano-deployment/latest-finished/download/1/ff-genesis.json
-wget https://hydra.iohk.io/job/Cardano/cardano-node/cardano-deployment/latest-finished/download/1/ff-config.json
-mkdir core
-mkdir relay
-cp ff* core/
-cp ff* relay/
-rm ff*
 
 # PATH update
 echo 'export PATH="~/.cabal/bin:$PATH"' >> ~/.bashrc
