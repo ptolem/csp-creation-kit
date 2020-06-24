@@ -31,8 +31,8 @@ If you are unable to SSH to the newly created VMs please check the SSH NSG rule 
 ## Running init scripts
 ```
 cd $HOME
-mkdir -p ws
-cd ws
+mkdir -p git
+cd git
 git clone https://github.com/ptolem/csp-creation-kit
 cd csp-creation-kit/init
 bash common.sh

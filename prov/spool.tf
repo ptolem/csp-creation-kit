@@ -28,12 +28,19 @@ resource "azurerm_virtual_network" "vnet" {
     }
 }
 
-# Create Subnet
-resource "azurerm_subnet" "snet" {
-    name                 = "${var.resource-prefix}-vnet-snet-nodes"
+# Create Subnets
+resource "azurerm_subnet" "coresnet" {
+    name                 = "${var.resource-prefix}-vnet-core-snet"
     resource_group_name  = azurerm_resource_group.rg.name
     virtual_network_name = azurerm_virtual_network.vnet.name
     address_prefix       = "10.0.1.0/24"
+}
+
+resource "azurerm_subnet" "relaysnet" {
+    name                 = "${var.resource-prefix}-vnet-relays-snet"
+    resource_group_name  = azurerm_resource_group.rg.name
+    virtual_network_name = azurerm_virtual_network.vnet.name
+    address_prefix       = "10.0.2.0/24"
 }
 
 # Create Public IPs
@@ -136,7 +143,7 @@ resource "azurerm_network_interface" "corenic" {
     enable_accelerated_networking = true
     ip_configuration {
         name                          = "corenic-ipconfig"
-        subnet_id                     = azurerm_subnet.snet.id
+        subnet_id                     = azurerm_subnet.coresnet.id
         private_ip_address_allocation = "Dynamic"
         public_ip_address_id          = azurerm_public_ip.corepip.id
     }
@@ -154,7 +161,7 @@ resource "azurerm_network_interface" "relaynic" {
     enable_accelerated_networking = false
     ip_configuration {
         name                          = "relaynic-ipconfig"
-        subnet_id                     = azurerm_subnet.snet.id
+        subnet_id                     = azurerm_subnet.relaysnet.id
         private_ip_address_allocation = "Dynamic"
         public_ip_address_id          = azurerm_public_ip.relaypip.id
     }

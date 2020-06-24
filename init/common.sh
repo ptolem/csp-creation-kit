@@ -1,11 +1,20 @@
 #!/bin/bash
 # Note: One-off execution only! Do not run more than once even in case of failures
 
-# main deps
+echo '========================================================='
+echo 'Main Dependencies'
+echo '========================================================='
 sudo apt-get update -y
-sudo apt-get -y install build-essential pkg-config libffi-dev libgmp-dev libssl-dev libtinfo-dev libsystemd-dev zlib1g-dev make g++ tmux git jq wget libncursesw5 -y
+sudo apt-get -y install build-essential pkg-config libffi-dev libgmp-dev libssl-dev libtinfo-dev libsystemd-dev zlib1g-dev make g++ tmux git jq wget libncursesw5 libsodium-dev -y
 
-# cabal
+echo '========================================================='
+echo 'Applying Updates / Patches'
+echo '========================================================='
+sudo unattended-upgrade
+
+echo '========================================================='
+echo 'Installing Cabal'
+echo '========================================================='
 cd $HOME
 mkdir -p init
 cd init
@@ -16,8 +25,11 @@ mkdir -p ~/.local/bin
 mv cabal ~/.local/bin/
 ~/.local/bin/cabal update
 ~/.local/bin/cabal user-config update
+sed -i 's/overwrite-policy:/overwrite-policy: always/g' ~/.cabal/config
 
-# GHC
+echo '========================================================='
+echo 'Installing GHC'
+echo '========================================================='
 wget https://downloads.haskell.org/~ghc/8.6.5/ghc-8.6.5-x86_64-deb9-linux.tar.xz
 tar -xf ghc-8.6.5-x86_64-deb9-linux.tar.xz
 rm ghc-8.6.5-x86_64-deb9-linux.tar.xz
@@ -25,16 +37,38 @@ cd ghc-8.6.5
 ./configure
 sudo make install
 
-# Clone cardano-node repo, Build and Publish tools
+echo '========================================================='
+echo 'Building and Publishing Cardano Binaries'
+echo '========================================================='
 cd $HOME
-mkdir -p ws
-cd ws
+mkdir -p git
+cd git
 git clone https://github.com/input-output-hk/cardano-node.git
 cd cardano-node
 git fetch --all --tags
-git checkout tags/1.13.0-rewards
+git checkout tags/1.14.1
+echo -e "package cardano-crypto-praos\n  flags: -external-libsodium-vrf" > cabal.project.local
 ~/.local/bin/cabal install cardano-node cardano-cli --installdir="$HOME/.local/bin/" # Takes 15+ mins first time around
 
-# PATH update
+echo '========================================================='
+echo 'Generating node artefacts - genesis, config and topology'
+echo '========================================================='
+cd $HOME
+mkdir -p node/config
+mkdir -p node/socket
+cd node/config
+wget https://hydra.iohk.io/build/3175192/download/1/shelley_testnet-topology.json
+wget https://hydra.iohk.io/build/3175192/download/1/shelley_testnet-genesis.json
+wget https://hydra.iohk.io/build/3175192/download/1/shelley_testnet-config.json
+mv shelley_testnet-topology.json topology.json
+mv shelley_testnet-genesis.json genesis.json
+mv shelley_testnet-config.json config.json
+sed -i 's/"TraceBlockFetchDecisions": false/"TraceBlockFetchDecisions": true/g' config.json
+sed -i 's/"ViewMode": "SimpleView"/"ViewMode": "LiveView"/g' config.json
+sed -i 's/shelley_testnet-genesis/genesis/g' config.json
+
+echo '========================================================='
+echo 'Updating PATH to binaries'
+echo '========================================================='
 echo 'export PATH="~/.cabal/bin:$PATH"' >> ~/.bashrc
 echo 'export PATH="~/.local/bin:$PATH"' >> ~/.bashrc
