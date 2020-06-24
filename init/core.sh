@@ -135,6 +135,10 @@ cardano-cli shelley stake-pool registration-certificate \
 --pool-pledge $PLEDGE --pool-cost 0 --pool-margin 0.046 \
 --pool-reward-account-verification-key-file stake.vkey \
 --pool-owner-stake-verification-key-file stake.vkey \
+--pool-relay-port 3001 \
+--pool-relay-ipv4 40.111.222.222 \
+--metadata-url https://raw.githubusercontent.com/ptolem/csp-creation-kit/master/init/SAFE.json \
+--metadata-hash 6bf124f217d0e5a0a8adb1dbd8540e1334280d49ab861127868339f43b3948af \
 --testnet-magic 42 \
 --out-file pool.cert
 
