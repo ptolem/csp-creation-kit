@@ -55,9 +55,9 @@ cd $HOME
 mkdir -p node/config
 mkdir -p node/socket
 cd node/config
-wget https://hydra.iohk.io/job/Cardano/cardano-node/cardano-deployment/latest-finished/download/1/ff-topology.json
-wget https://hydra.iohk.io/job/Cardano/cardano-node/cardano-deployment/latest-finished/download/1/ff-genesis.json
-wget https://hydra.iohk.io/job/Cardano/cardano-node/cardano-deployment/latest-finished/download/1/ff-config.json
+wget https://hydra.iohk.io/build/3175192/download/1/shelley_testnet-topology.json
+wget https://hydra.iohk.io/build/3175192/download/1/shelley_testnet-genesis.json
+wget https://hydra.iohk.io/build/3175192/download/1/shelley_testnet-config.json
 sed -i 's/"TraceBlockFetchDecisions": false/"TraceBlockFetchDecisions": true/g' ff-config.json
 sed -i 's/"ViewMode": "SimpleView"/"ViewMode": "LiveView"/g' ff-config.json
 
