@@ -46,6 +46,7 @@ git clone https://github.com/input-output-hk/cardano-node.git
 cd cardano-node
 git fetch --all --tags
 git checkout tags/1.14.0
+echo -e "package cardano-crypto-praos\n  flags: -external-libsodium-vrf" > cabal.project.local
 ~/.local/bin/cabal install cardano-node cardano-cli --installdir="$HOME/.local/bin/" # Takes 15+ mins first time around
 
 echo '========================================================='
