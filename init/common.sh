@@ -58,8 +58,12 @@ cd node/config
 wget https://hydra.iohk.io/build/3175192/download/1/shelley_testnet-topology.json
 wget https://hydra.iohk.io/build/3175192/download/1/shelley_testnet-genesis.json
 wget https://hydra.iohk.io/build/3175192/download/1/shelley_testnet-config.json
-sed -i 's/"TraceBlockFetchDecisions": false/"TraceBlockFetchDecisions": true/g' ff-config.json
-sed -i 's/"ViewMode": "SimpleView"/"ViewMode": "LiveView"/g' ff-config.json
+mv shelley_testnet-topology.json topology.json
+mv shelley_testnet-genesis.json genesis.json
+mv shelley_testnet-config.json config.json
+sed -i 's/"TraceBlockFetchDecisions": false/"TraceBlockFetchDecisions": true/g' config.json
+sed -i 's/"ViewMode": "SimpleView"/"ViewMode": "LiveView"/g' config.json
+sed -i 's/shelley_testnet-genesis/genesis/g' config.json
 
 echo '========================================================='
 echo 'Updating PATH to binaries'
