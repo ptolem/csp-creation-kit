@@ -1,20 +1,17 @@
 #!/bin/bash
 # Note: One-off execution only! Do not run more than once even in case of failures
 
-# main deps
 echo '========================================================='
 echo 'Main Dependencies'
 echo '========================================================='
 sudo apt-get update -y
 sudo apt-get -y install build-essential pkg-config libffi-dev libgmp-dev libssl-dev libtinfo-dev libsystemd-dev zlib1g-dev make g++ tmux git jq wget libncursesw5 -y
 
-# updates/security patches
 echo '========================================================='
 echo 'Applying Updates / Patches'
 echo '========================================================='
 sudo unattended-upgrade
 
-# cabal
 echo '========================================================='
 echo 'Installing Cabal'
 echo '========================================================='
@@ -29,7 +26,6 @@ mv cabal ~/.local/bin/
 ~/.local/bin/cabal update
 ~/.local/bin/cabal user-config update
 
-# ghc
 echo '========================================================='
 echo 'Installing GHC'
 echo '========================================================='
@@ -40,20 +36,31 @@ cd ghc-8.6.5
 ./configure
 sudo make install
 
-# clone cardano-node repo, build and publish binaries
 echo '========================================================='
 echo 'Building and Publishing Cardano Binaries'
 echo '========================================================='
 cd $HOME
-mkdir -p ws
-cd ws
+mkdir -p git
+cd git
 git clone https://github.com/input-output-hk/cardano-node.git
 cd cardano-node
 git fetch --all --tags
-git checkout tags/1.13.0-rewards
+git checkout tags/1.14
 ~/.local/bin/cabal install cardano-node cardano-cli --installdir="$HOME/.local/bin/" # Takes 15+ mins first time around
 
-# path update to include binaries
+echo '========================================================='
+echo 'Generating node artefacts - genesis, config and topology'
+echo '========================================================='
+cd $HOME
+mkdir -p node/config
+mkdir -p node/socket
+cd node/config
+wget https://hydra.iohk.io/job/Cardano/cardano-node/cardano-deployment/latest-finished/download/1/ff-topology.json
+wget https://hydra.iohk.io/job/Cardano/cardano-node/cardano-deployment/latest-finished/download/1/ff-genesis.json
+wget https://hydra.iohk.io/job/Cardano/cardano-node/cardano-deployment/latest-finished/download/1/ff-config.json
+sed -i 's/"TraceBlockFetchDecisions": false/"TraceBlockFetchDecisions": true/g' ff-config.json
+sed -i 's/"ViewMode": "SimpleView"/"ViewMode": "LiveView"/g' ff-config.json
+
 echo '========================================================='
 echo 'Updating PATH to binaries'
 echo '========================================================='

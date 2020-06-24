@@ -9,22 +9,35 @@ Note the public IP of the core and relay VMs from the provisioning. Ensure the t
 ## Relay
 ```
 cardano-node run \
-  --topology $HOME/cardano-node/config/ff-topology.json \
-  --database-path $HOME/cardano-node/db/ \
-  --socket-path $HOME/cardano-node/socket/node.socket \
+  --topology ~/cardano-node/config/ff-topology.json \
+  --database-path ~/cardano-node/db/ \
+  --socket-path ~/cardano-node/socket/node.socket \
   --host-addr 0.0.0.0 \
   --port 3001 \
-  --config $HOME/cardano-node/config/ff-config.json
+  --config ~/cardano-node/config/ff-config.json
 ```
-### Core
+### Core (standard node)
 ```
 cardano-node run \
-  --topology $HOME/cardano-node/config/ff-topology.json \
-  --database-path $HOME/cardano-node/db/ \
-  --socket-path $HOME/cardano-node/socket/node.socket \
+  --topology ~/cardano-node/config/ff-topology.json \
+  --database-path ~/cardano-node/db/ \
+  --socket-path ~/cardano-node/socket/node.socket \
   --host-addr 127.0.0.1 \
   --port 3000 \
-  --config $HOME/cardano-node/config/ff-config.json
+  --config ~/cardano-node/config/ff-config.json
+```
+### Core (block producing node)
+```
+cardano-node run \
+  --topology ~/cardano-node/config/ff-topology.json \
+  --database-path ~/cardano-node/db/ \
+  --socket-path ~/cardano-node/socket/node.socket \
+  --host-addr 127.0.0.1 \
+  --port 3000 \
+  --config ~/cardano-node/config/ff-config.json \
+  --shelley-kes-key ~/kc/kes.skey \
+  --shelley-vrf-key ~/kc/vrf.skey \
+  --shelley-operational-certificate ~/kc/node.cert
 ```
 
 ## Troubleshooting
