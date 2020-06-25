@@ -126,6 +126,12 @@ UTXO0V=$(echo $UTXO0 | egrep -o '[a-z0-9]+' | sed -n 3p)
 echo $UTXO0
 
 echo '========================================================='
+echo 'Generating Stake Pool Metadata'
+echo '========================================================='
+wget https://raw.githubusercontent.com/ptolem/sp/master/SAFE.json
+METAHASH=$(cardano-cli shelley stake-pool metadata-hash --pool-metadata-file KBLOK.json)
+
+echo '========================================================='
 echo 'Generating Stake Pool Registration Certificate'
 echo '========================================================='
 PLEDGE=$(expr $UTXO0V - 550000 - 500000000) # Remaining (UTXOV) - EstimatedBuffer - 500000000 (cat ~/node/config/genesis.json | grep poolDeposit)
@@ -137,8 +143,8 @@ cardano-cli shelley stake-pool registration-certificate \
 --pool-owner-stake-verification-key-file stake.vkey \
 --pool-relay-port 3001 \
 --pool-relay-ipv4 40.111.222.222 \
---metadata-url https://raw.githubusercontent.com/ptolem/csp-creation-kit/master/init/SAFE.json \
---metadata-hash 6bf124f217d0e5a0a8adb1dbd8540e1334280d49ab861127868339f43b3948af \
+--metadata-url https://raw.githubusercontent.com/ptolem/sp/master/SAFE.json \
+--metadata-hash $(echo $METAHASH) \
 --testnet-magic 42 \
 --out-file pool.cert
 
