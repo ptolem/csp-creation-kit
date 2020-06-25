@@ -64,7 +64,7 @@ FEE=$(cardano-cli shelley transaction calculate-min-fee \
 echo '========================================================='
 echo 'Building stake pool transaction for key deposit'
 echo '========================================================='
-TXOUT=$(expr $UTXO0V - $FEE - 400000)
+TXOUT=$(expr $UTXO0V - $FEE - 400000) # 400000 = cat ~/node/config/genesis.json | grep keyDeposit
 cardano-cli shelley transaction build-raw \
 --tx-in $(echo $UTXO0H)#$(echo $UTXO0I) --tx-out $(cat payment.addr)+$(echo $TXOUT) --ttl $TTL --fee $FEE --certificate-file stake.cert --out-file tx.raw
 echo '========================================================='
@@ -109,7 +109,7 @@ echo '========================================================='
 echo 'Generating Stake Pool Operational Certificate'
 echo '========================================================='
 CTIP=$(cardano-cli shelley query tip --testnet-magic 42 | egrep -o '[0-9]+' | head -n 1)
-KESP=$(expr $CTIP / 3600) 
+KESP=$(expr $CTIP / 3600) # 3600 = (cat ~/node/config/genesis.json | grep slotsPerKESPeriod)
 cardano-cli shelley node issue-op-cert \
 --kes-verification-key-file kes.vkey \
 --cold-signing-key-file cold.skey \
@@ -128,7 +128,7 @@ echo $UTXO0
 echo '========================================================='
 echo 'Generating Stake Pool Registration Certificate'
 echo '========================================================='
-PLEDGE=$(expr $UTXO0V - 184861 - 500000000) # Remaining (UTXOV) - Fee - 500000000 (cat ~/node/config/ff-genesis.json | grep poolDeposit)
+PLEDGE=$(expr $UTXO0V - 550000 - 500000000) # Remaining (UTXOV) - EstimatedBuffer - 500000000 (cat ~/node/config/genesis.json | grep poolDeposit)
 cardano-cli shelley stake-pool registration-certificate \
 --cold-verification-key-file cold.vkey \
 --vrf-verification-key-file vrf.vkey \
@@ -165,15 +165,15 @@ FEE=$(cardano-cli shelley transaction calculate-min-fee \
 --certificate-file pool.cert \
 --certificate-file delegation.cert \
 --protocol-params-file protocol.json | egrep -o '[0-9]+')
-# 184861
 
 echo '========================================================='
 echo 'Building Stake Pool Delegation Key transaction'
 echo '========================================================='
+TXOUT=$(expr $UTXO0V - $FEE - 500000000) #(cat ~/node/config/genesis.json | grep poolDeposit)
 cardano-cli shelley transaction build-raw \
 --certificate-file pool.cert \
 --certificate-file delegation.cert \
---tx-in $(echo $UTXO0H)#$(echo $UTXO0I) --tx-out $(cat payment.addr)+$(echo $PLEDGE) --ttl $TTL --fee $FEE --out-file tx.raw
+--tx-in $(echo $UTXO0H)#$(echo $UTXO0I) --tx-out $(cat payment.addr)+$(echo $TXOUT) --ttl $TTL --fee $FEE --out-file tx.raw
 echo '========================================================='
 echo 'Signing transaction'
 echo '========================================================='
