@@ -5,7 +5,7 @@ echo '========================================================='
 echo 'Main Dependencies'
 echo '========================================================='
 sudo apt-get update -y
-sudo apt-get -y install build-essential pkg-config libffi-dev libgmp-dev libssl-dev libtinfo-dev libsystemd-dev zlib1g-dev make g++ tmux git jq wget libncursesw5 libsodium-dev -y
+sudo apt-get -y install build-essential pkg-config libffi-dev libgmp-dev libssl-dev libtinfo-dev libsystemd-dev zlib1g-dev make g++ tmux git jq wget libncursesw5 powershell libsodium-dev -y
 
 echo '========================================================='
 echo 'Applying Updates / Patches'
@@ -46,7 +46,7 @@ cd git
 git clone https://github.com/input-output-hk/cardano-node.git
 cd cardano-node
 git fetch --all --tags
-git checkout tags/1.14.1
+git checkout release/1.14.x
 echo -e "package cardano-crypto-praos\n  flags: -external-libsodium-vrf" > cabal.project.local
 ~/.local/bin/cabal install cardano-node cardano-cli --installdir="$HOME/.local/bin/" # Takes 15+ mins first time around
 
@@ -57,12 +57,9 @@ cd $HOME
 mkdir -p node/config
 mkdir -p node/socket
 cd node/config
-wget https://hydra.iohk.io/build/3175192/download/1/shelley_testnet-topology.json
-wget https://hydra.iohk.io/build/3175192/download/1/shelley_testnet-genesis.json
-wget https://hydra.iohk.io/build/3175192/download/1/shelley_testnet-config.json
-mv shelley_testnet-topology.json topology.json
-mv shelley_testnet-genesis.json genesis.json
-mv shelley_testnet-config.json config.json
+wget -O topology.json https://hydra.iohk.io/build/3245987/download/1/shelley_testnet-topology.json
+wget -O genesis.json https://hydra.iohk.io/build/3245987/download/1/shelley_testnet-genesis.json
+wget -O config.json https://hydra.iohk.io/build/3245987/download/1/shelley_testnet-config.json
 sed -i 's/"TraceBlockFetchDecisions": false/"TraceBlockFetchDecisions": true/g' config.json
 sed -i 's/"ViewMode": "SimpleView"/"ViewMode": "LiveView"/g' config.json
 sed -i 's/shelley_testnet-genesis/genesis/g' config.json

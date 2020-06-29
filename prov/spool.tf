@@ -140,7 +140,7 @@ resource "azurerm_network_interface" "corenic" {
     name                      = "${var.resource-prefix}-corenic"
     location                  = var.pool-location
     resource_group_name       = azurerm_resource_group.rg.name
-    enable_accelerated_networking = true
+    enable_accelerated_networking = var.corevm-nic-accelerated-networking
     ip_configuration {
         name                          = "corenic-ipconfig"
         subnet_id                     = azurerm_subnet.coresnet.id
@@ -158,7 +158,7 @@ resource "azurerm_network_interface" "relaynic" {
     name                      = "${var.resource-prefix}-relaynic"
     location                  = var.pool-location
     resource_group_name       = azurerm_resource_group.rg.name
-    enable_accelerated_networking = false
+    enable_accelerated_networking = var.relayvm-nic-accelerated-networking
     ip_configuration {
         name                          = "relaynic-ipconfig"
         subnet_id                     = azurerm_subnet.relaysnet.id
@@ -253,8 +253,8 @@ resource "azurerm_linux_virtual_machine" "relayvm" {
     os_disk {
         name              = "${var.resource-prefix}-relayvm-osdisk"
         caching           = "ReadWrite"
-        storage_account_type = "StandardSSD_LRS"
-        disk_size_gb = "64"
+        storage_account_type = "Premium_LRS"
+        disk_size_gb = "128"
     }
 
     source_image_reference {

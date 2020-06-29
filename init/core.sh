@@ -62,7 +62,7 @@ FEE=$(cardano-cli shelley transaction calculate-min-fee \
 --certificate-file stake.cert \
 --protocol-params-file protocol.json | egrep -o '[0-9]+')
 echo '========================================================='
-echo 'Building stake pool transaction for key deposit'
+echo 'Generating transaction for Stake Pool Registration Key Deposit'
 echo '========================================================='
 TXOUT=$(expr $UTXO0V - $FEE - 400000) # 400000 = cat ~/node/config/genesis.json | grep keyDeposit
 cardano-cli shelley transaction build-raw \
@@ -132,7 +132,7 @@ wget https://raw.githubusercontent.com/ptolem/sp/master/SAFE.json
 METAHASH=$(cardano-cli shelley stake-pool metadata-hash --pool-metadata-file KBLOK.json)
 
 echo '========================================================='
-echo 'Generating Stake Pool Registration Certificate'
+echo 'Generating transaction for Stake Pool Operation Certificate Pool Deposit'
 echo '========================================================='
 PLEDGE=$(expr $UTXO0V - 550000 - 500000000) # Remaining (UTXOV) - EstimatedBuffer - 500000000 (cat ~/node/config/genesis.json | grep poolDeposit)
 cardano-cli shelley stake-pool registration-certificate \

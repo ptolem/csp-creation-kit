@@ -22,6 +22,10 @@ variable "corevm-size" {
   type        = string
   description = "Stake Pool core node VM size (az vm list-sizes --location $pool-location -o table)"
 }
+variable "corevm-nic-accelerated-networking" {
+  type        = string
+  description = "Enable accelerated networking for NIC. Ensure it is supported by VM size."
+}
 variable "corevm-comp-name" {
   type        = string
   description = "Stake Pool core node VM computer name"
@@ -33,6 +37,10 @@ variable "core-node-port" {
 variable "relayvm-size" {
   type        = string
   description = "Stake Pool relay node VM size (az vm list-sizes --location $pool-location -o table)"
+}
+variable "relayvm-nic-accelerated-networking" {
+  type        = string
+  description = "Enable accelerated networking for NIC. Ensure it is supported by VM size."
 }
 variable "relayvm-comp-name" {
   type        = string
