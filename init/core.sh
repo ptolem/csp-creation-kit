@@ -64,7 +64,8 @@ FEE=$(cardano-cli shelley transaction calculate-min-fee \
 echo '========================================================='
 echo 'Generating transaction for Stake Pool Registration Key Deposit'
 echo '========================================================='
-TXOUT=$(expr $UTXO0V - $FEE - 400000) # 400000 = cat ~/node/config/genesis.json | grep keyDeposit
+KEY_DEPOSIT=$(cat ~/node/config/genesis.json | grep keyDeposit | egrep -o '[0-9]+')
+TXOUT=$(expr $UTXO0V - $FEE - $KEY_DEPOSIT) # KEY_DEPOSIT=400000 at time of writing 
 cardano-cli shelley transaction build-raw \
 --tx-in $(echo $UTXO0H)#$(echo $UTXO0I) --tx-out $(cat payment.addr)+$(echo $TXOUT) --ttl $TTL --fee $FEE --certificate-file stake.cert --out-file tx.raw
 echo '========================================================='
@@ -84,7 +85,7 @@ cardano-cli shelley transaction submit \
 --testnet-magic 42
 
 echo '========================================================='
-echo 'Generating Cold Keys and a Cold_counter'
+echo 'Generating Cold Keys and a Cold Counter'
 echo '========================================================='
 cardano-cli shelley node key-gen \
 --cold-verification-key-file cold.vkey \
@@ -106,10 +107,19 @@ cardano-cli shelley node key-gen-KES \
 --signing-key-file kes.skey
 
 echo '========================================================='
+echo 'Generating Stake Pool Delegation Certificate (Pledge)'
+echo '========================================================='
+cardano-cli shelley stake-address delegation-certificate \
+--stake-verification-key-file stake.vkey \
+--cold-verification-key-file cold.vkey \
+--out-file delegation.cert
+
+echo '========================================================='
 echo 'Generating Stake Pool Operational Certificate'
 echo '========================================================='
+SLOTS_PER_KESPERIOD=$(cat ~/node/config/genesis.json | grep slotsPerKESPeriod | egrep -o '[0-9]+')
 CTIP=$(cardano-cli shelley query tip --testnet-magic 42 | egrep -o '[0-9]+' | head -n 1)
-KESP=$(expr $CTIP / 3600) # 3600 = (cat ~/node/config/genesis.json | grep slotsPerKESPeriod)
+KESP=$(expr $CTIP / $SLOTS_PER_KESPERIOD) # SLOTS_PER_KESPERIOD=3600 at time of writing  
 cardano-cli shelley node issue-op-cert \
 --kes-verification-key-file kes.vkey \
 --cold-signing-key-file cold.skey \
@@ -134,33 +144,26 @@ METAHASH=$(cardano-cli shelley stake-pool metadata-hash --pool-metadata-file SAF
 echo '========================================================='
 echo 'Generating transaction for Stake Pool Operation Certificate Pool Deposit'
 echo '========================================================='
-PLEDGE=$(expr $UTXO0V - 550000 - 500000000) # Remaining (UTXOV) - EstimatedBuffer - 500000000 (cat ~/node/config/genesis.json | grep poolDeposit)
+POOL_DEPOSIT=$(cat ~/node/config/genesis.json | grep poolDeposit | egrep -o '[0-9]+') # 500000000 at time of writing
+PLEDGE=$(expr $UTXO0V - 550000 - $POOL_DEPOSIT) # Remaining (UTXOV) - EstimatedBuffer - PoolDeposit
 cardano-cli shelley stake-pool registration-certificate \
 --cold-verification-key-file cold.vkey \
 --vrf-verification-key-file vrf.vkey \
---pool-pledge $PLEDGE --pool-cost 128 --pool-margin 0.064 \
+--pool-pledge $PLEDGE --pool-cost 128000000 --pool-margin 0.064 \
 --pool-reward-account-verification-key-file stake.vkey \
 --pool-owner-stake-verification-key-file stake.vkey \
+--single-host-pool-relay r0.eun.test.safestak.com \
 --pool-relay-port 3001 \
---pool-relay-ipv4 r0.eun.test.safestak.com \
 --metadata-url https://raw.githubusercontent.com/ptolem/sp/master/SAFE.json \
 --metadata-hash $(echo $METAHASH) \
 --testnet-magic 42 \
 --out-file pool.cert
 
 echo '========================================================='
-echo 'Generating Stake Pool Delegation Certificate'
-echo '========================================================='
-cardano-cli shelley stake-address delegation-certificate \
---stake-verification-key-file stake.vkey \
---cold-verification-key-file cold.vkey \
---out-file delegation.cert
-
-echo '========================================================='
 echo 'Calculating Fee'
 echo '========================================================='
 CTIP=$(cardano-cli shelley query tip --testnet-magic 42 | egrep -o '[0-9]+' | head -n 1)
-TTL=$(expr $CTIP + 500)
+TTL=$(expr $CTIP + 400)
 FEE=$(cardano-cli shelley transaction calculate-min-fee \
 --tx-in-count 1 \
 --tx-out-count 1 \
@@ -175,7 +178,7 @@ FEE=$(cardano-cli shelley transaction calculate-min-fee \
 echo '========================================================='
 echo 'Building Stake Pool Delegation Key transaction'
 echo '========================================================='
-TXOUT=$(expr $UTXO0V - $FEE - 500000000) #(cat ~/node/config/genesis.json | grep poolDeposit)
+TXOUT=$(expr $UTXO0V - $FEE - $POOL_DEPOSIT) 
 cardano-cli shelley transaction build-raw \
 --certificate-file pool.cert \
 --certificate-file delegation.cert \

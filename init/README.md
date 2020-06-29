@@ -39,7 +39,7 @@ bash common.sh
 ```
 
 ### Relay nodes
-`bash relay.sh` and edit the ff-topology.json file to ensure it follows the template in [ff-topology-relay.jsont](./ff-topology-relay.jsont). 
+Edit the topology.json file to ensure it follows the template in [topology-relay.jsont](./ff-topology-relay.jsont) and include up to 20 other trusted relays. 
 
 ### Core nodes
-`bash core.sh` and edit the ff-topology.json file to ensure it follows the template in [ff-topology-relay.jsont](./ff-topology-core.jsont). 
+Follow individual steps in `bash core.sh` and edit the topology.json file to ensure it follows the template in [ff-topology-relay.jsont](./ff-topology-core.jsont). 

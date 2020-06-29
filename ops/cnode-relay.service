@@ -1,0 +1,21 @@
+[Unit]
+Description=Cardano Node - Relay
+After=multi-user.target
+
+[Service]
+Type=simple
+EnvironmentFile=/home/ss/node/config/stn-relay.environment
+ExecStart=/home/ss/.local/bin/cardano-node run --config $CONFIG --topology $TOPOLOGY --database-path $DBPATH --socket-path $SOCKETPATH --host-addr $HOSTADDR --port $PORT
+LimitNOFILE=32768
+
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=cardano-node-relay
+
+KillSignal = "SIGINT"
+Restart=on-failure
+RestartSec=8s
+RestartKillSignal = "SIGINT"
+
+[Install]
+WantedBy=multi-user.target

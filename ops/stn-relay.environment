@@ -1,0 +1,6 @@
+CONFIG="~/node/config/config.json"
+TOPOLOGY="~/node/config/topology.json"
+DBPATH="~/node/db/"
+SOCKETPATH="~/node/socket/node.socket"
+HOSTADDR="0.0.0.0"
+PORT="3001"
