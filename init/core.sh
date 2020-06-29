@@ -135,10 +135,14 @@ UTXO0I=$(echo $UTXO0 | egrep -o '[a-z0-9]+' | sed -n 2p)
 UTXO0V=$(echo $UTXO0 | egrep -o '[a-z0-9]+' | sed -n 3p)
 echo $UTXO0
 
+###############################################################
+# NOTE: edit the parameters below based on what is required
+#
+###############################################################
 echo '========================================================='
 echo 'Generating Stake Pool Metadata'
 echo '========================================================='
-wget https://raw.githubusercontent.com/ptolem/sp/master/SAFE.json
+wget https://raw.githubusercontent.com/ptolem/sp/master/SAFE.json # Should be your JSON file
 METAHASH=$(cardano-cli shelley stake-pool metadata-hash --pool-metadata-file SAFE.json)
 
 echo '========================================================='

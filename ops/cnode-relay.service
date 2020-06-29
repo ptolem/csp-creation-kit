@@ -13,10 +13,10 @@ StandardOutput=journal
 StandardError=journal
 SyslogIdentifier=cardano-node-relay
 
-KillSignal = "SIGINT"
 Restart=on-failure
 RestartSec=8s
-RestartKillSignal = "SIGINT"
+KillSignal=SIGINT
+RestartKillSignal=SIGINT
 
 [Install]
 WantedBy=multi-user.target
