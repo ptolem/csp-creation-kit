@@ -36,6 +36,7 @@ cp stn-relay.environment ~/node/config
 sudo cp cnode-relay.service /etc/systemd/system/cnode-relay.service
 sudo chmod 644 /etc/systemd/system/cnode-relay.service
 sudo systemctl start cnode-relay
+sudo systemctl status cnode-relay # This should look good
 sudo systemctl enable cnode-relay
 ```
 
@@ -45,6 +46,7 @@ cp stn-core.environment ~/node/config
 sudo cp cnode-core.service /etc/systemd/system/cnode-core.service
 sudo chmod 644 /etc/systemd/system/cnode-core.service
 sudo systemctl start cnode-core
+sudo systemctl status cnode-core # This should look good
 sudo systemctl enable cnode-core
 ```
 
