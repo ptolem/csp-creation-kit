@@ -52,7 +52,7 @@ CTIP=$(cardano-cli shelley query tip --testnet-magic 42 | egrep -o '[0-9]+' | he
 echo '========================================================='
 echo 'Calculating minimum fee'
 echo '========================================================='
-TTL=$(expr $CTIP + 500)
+TTL=$(expr $CTIP + 400)
 FEE=$(cardano-cli shelley transaction calculate-min-fee \
 --tx-in-count 1 \
 --tx-out-count 1 \
@@ -129,7 +129,7 @@ echo '========================================================='
 echo 'Generating Stake Pool Metadata'
 echo '========================================================='
 wget https://raw.githubusercontent.com/ptolem/sp/master/SAFE.json
-METAHASH=$(cardano-cli shelley stake-pool metadata-hash --pool-metadata-file KBLOK.json)
+METAHASH=$(cardano-cli shelley stake-pool metadata-hash --pool-metadata-file SAFE.json)
 
 echo '========================================================='
 echo 'Generating transaction for Stake Pool Operation Certificate Pool Deposit'
@@ -138,11 +138,11 @@ PLEDGE=$(expr $UTXO0V - 550000 - 500000000) # Remaining (UTXOV) - EstimatedBuffe
 cardano-cli shelley stake-pool registration-certificate \
 --cold-verification-key-file cold.vkey \
 --vrf-verification-key-file vrf.vkey \
---pool-pledge $PLEDGE --pool-cost 0 --pool-margin 0.046 \
+--pool-pledge $PLEDGE --pool-cost 128 --pool-margin 0.064 \
 --pool-reward-account-verification-key-file stake.vkey \
 --pool-owner-stake-verification-key-file stake.vkey \
 --pool-relay-port 3001 \
---pool-relay-ipv4 40.111.222.222 \
+--pool-relay-ipv4 r0.eun.test.safestak.com \
 --metadata-url https://raw.githubusercontent.com/ptolem/sp/master/SAFE.json \
 --metadata-hash $(echo $METAHASH) \
 --testnet-magic 42 \
