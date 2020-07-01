@@ -1,6 +1,6 @@
 #!/bin/bash
 # Note: One-off execution only! Do not run more than once even in case of failures
-# Don't forget to run `source ~/.bashrc` and `export CARDANO_NODE_SOCKET_PATH=~/node/socket/node.socket`
+# Don't forget to run `source ~/.bashrc` when running for the first time!`
 
 echo '========================================================='
 echo 'Generating Core Keys and Addresses'
@@ -23,7 +23,7 @@ cardano-cli shelley stake-address build \
 echo '========================================================='
 echo 'Getting some loot from the faucet'
 echo '========================================================='
-curl -v -XPOST "https://faucet.shelley-testnet.dev.cardano.org/send-money/$(cat payment.addr)"
+curl -v -XPOST "https://faucet.shelley-testnet.dev.cardano.org/send-money/$(cat ~/kc/payment.addr)"
 
 echo '========================================================='
 echo 'Generating Protocol Parameters'

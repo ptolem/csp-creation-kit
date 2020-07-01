@@ -2,7 +2,7 @@
 
 ## Goals
  - Define an executable declarative representation of cloud infrastructure to host a [Cardano](https://cardano.org/en/what-is-cardano/) stake pool 
- - Write a set of scripts to setup and initialise Cardano core and relay nodes on the cloud VMs 
+ - Write a set of scripts to setup and initialise Cardano core and relay nodes in the infrastructure
  - Document the whole process and share it with the community to expand and strengthen the Cardano blockchain network
 
 ## Prerequisites (Windows 10)

@@ -1,5 +1,4 @@
 #!/bin/bash
-# Don't forget to run `source ~/.bashrc` and `export CARDANO_NODE_SOCKET_PATH=~/node/socket/node.socket`
 
 echo '========================================================='
 echo 'Re-Generating Stake Pool Operational Certificate'
@@ -12,3 +11,5 @@ cardano-cli shelley node issue-op-cert \
 --cold-signing-key-file ~/kc/cold.skey \
 --operational-certificate-issue-counter ~/kc/cold.counter \ # This gets incremented
 --kes-period $KESP --out-file ~/kc/node.cert
+
+# Don't forget to restart your node after this

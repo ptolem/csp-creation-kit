@@ -52,7 +52,7 @@ sudo systemctl enable cnode-core
 
 ## Checking rewards
 ```
-cardano-cli shelley query stake-address-info --address $(cat stake.addr) --testnet-magic 42
+cardano-cli shelley query stake-address-info --address $(cat ~/kc/stake.addr) --testnet-magic 42
 ```
 
 ## Troubleshooting

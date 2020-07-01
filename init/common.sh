@@ -65,7 +65,9 @@ sed -i 's/"ViewMode": "SimpleView"/"ViewMode": "LiveView"/g' config.json
 sed -i 's/shelley_testnet-genesis/genesis/g' config.json
 
 echo '========================================================='
-echo 'Updating PATH to binaries'
+echo 'Updating PATH to binaries and setting socket env variable'
 echo '========================================================='
 echo 'export PATH="~/.cabal/bin:$PATH"' >> ~/.bashrc
 echo 'export PATH="~/.local/bin:$PATH"' >> ~/.bashrc
+
+echo 'export CARDANO_NODE_SOCKET_PATH=/home/ss/node/socket/node.socket' >> ~/.bashrc
