@@ -149,7 +149,7 @@ echo '========================================================='
 echo 'Generating transaction for Stake Pool Operation Certificate Pool Deposit'
 echo '========================================================='
 POOL_DEPOSIT=$(cat ~/node/config/genesis.json | grep poolDeposit | egrep -o '[0-9]+') # 500000000 at time of writing
-PLEDGE=$(expr $UTXO0V - 550000 - $POOL_DEPOSIT) # Remaining (UTXOV) - EstimatedBuffer - PoolDeposit
+PLEDGE=1000000000000 # 1M ADA
 cardano-cli shelley stake-pool registration-certificate \
 --cold-verification-key-file cold.vkey \
 --vrf-verification-key-file vrf.vkey \
