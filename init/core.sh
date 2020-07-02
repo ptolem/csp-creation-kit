@@ -148,7 +148,6 @@ METAHASH=$(cardano-cli shelley stake-pool metadata-hash --pool-metadata-file SAF
 echo '========================================================='
 echo 'Generating transaction for Stake Pool Operation Certificate Pool Deposit'
 echo '========================================================='
-POOL_DEPOSIT=$(cat ~/node/config/genesis.json | grep poolDeposit | egrep -o '[0-9]+') # 500000000 at time of writing
 PLEDGE=1000000000000 # 1M ADA
 cardano-cli shelley stake-pool registration-certificate \
 --cold-verification-key-file cold.vkey \
@@ -182,6 +181,7 @@ FEE=$(cardano-cli shelley transaction calculate-min-fee \
 echo '========================================================='
 echo 'Building Stake Pool Delegation Key transaction'
 echo '========================================================='
+POOL_DEPOSIT=$(cat ~/node/config/genesis.json | grep poolDeposit | egrep -o '[0-9]+') # 500000000 at time of writing
 TXOUT=$(expr $UTXO0V - $FEE - $POOL_DEPOSIT) 
 cardano-cli shelley transaction build-raw \
 --certificate-file pool.cert \
