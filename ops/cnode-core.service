@@ -14,7 +14,7 @@ StandardError=journal
 SyslogIdentifier=cardano-node-core
 
 Restart=on-failure
-RestartSec=8s
+RestartSec=4s
 KillSignal=SIGINT
 RestartKillSignal=SIGINT
 
