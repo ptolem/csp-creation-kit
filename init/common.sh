@@ -5,7 +5,7 @@ echo '========================================================='
 echo 'Main Dependencies'
 echo '========================================================='
 sudo apt-get update -y
-sudo apt-get -y install build-essential pkg-config libffi-dev libgmp-dev libssl-dev libtinfo-dev libsystemd-dev zlib1g-dev make g++ tmux git jq wget libncursesw5 libsodium-dev -y
+sudo apt-get -y install build-essential pkg-config libffi-dev libgmp-dev libssl-dev libtinfo-dev libsystemd-dev zlib1g-dev make g++ tmux git jq wget libncursesw5 libsodium-dev chrony -y
 
 echo '========================================================='
 echo 'Applying Updates / Patches'
@@ -49,6 +49,8 @@ git fetch --all --tags
 git checkout release/1.14.x
 echo -e "package cardano-crypto-praos\n  flags: -external-libsodium-vrf" > cabal.project.local
 ~/.local/bin/cabal install cardano-node cardano-cli --installdir="$HOME/.local/bin/" # Takes 15+ mins first time around
+
+#sudo cp ~/git/csp-creation-kit/init/sysctl.conf /etc/sysctl.conf
 
 echo '========================================================='
 echo 'Generating node artefacts - genesis, config and topology'
