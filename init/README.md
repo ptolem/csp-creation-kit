@@ -1,17 +1,17 @@
 # SafeStak [SAFE] Cardano Stake Pool Initialisation Kit
 
-In an effort to save time setting up the VMs to run the Cardano stake pool I have created the scripts in this folder but please use it with caution as they are incomplete, untested and possibility out-of-date! 
+In an effort to save time setting up the VMs to run the Cardano stake pool I have created the scripts in this folder but please use it with caution as they are possibility out-of-date! 
 
 ## Prerequisites
-It is assumed that the Terraform provisioning stage has completed successfully and all the resulting Azure Cloud infrastructure exists in a pristine state. 
+It is assumed that the [Terraform provisioning step](../README.md) has completed successfully and all the resulting Azure Cloud infrastructure exists in a pristine state. 
 
 ## SSH 
 Using the SSH key output from Terraform, create the .pem file and ensure the relevant security rules are applied with the key prep scripts below.
  
-### Linux SSH key prep  
+### SSH key prep (Linux)
 `chmod 400 YOUR_PEM_FILE.pem`
 
-### Windows SSH key prep 
+### SSH key prep (Windows)
 ```
 $path = "YOUR_PEM_FILE.pem"
 icacls.exe $path /reset
@@ -39,7 +39,7 @@ bash common.sh
 ```
 
 ### Relay nodes
-Edit the topology.json file to ensure it follows the template in [topology-relay.jsont](./ff-topology-relay.jsont) and include up to 20 other trusted relays. 
+Edit the topology.json file to ensure it follows the template in [topology-relay.jsont](./ff-topology-relay.jsont) and include up to 18 other trusted relays. 
 
 ### Core nodes
 Follow individual steps in `bash core.sh` and edit the topology.json file to ensure it follows the template in [ff-topology-relay.jsont](./ff-topology-core.jsont). 

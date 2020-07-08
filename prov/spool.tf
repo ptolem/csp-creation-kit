@@ -56,8 +56,20 @@ resource "azurerm_public_ip" "corepip" {
     }
 }
 
-resource "azurerm_public_ip" "relaypip" {
-    name                         = "${var.resource-prefix}-relaypip"
+resource "azurerm_public_ip" "relay0pip" {
+    name                         = "${var.resource-prefix}-relay0pip"
+    location                     = var.pool-location
+    resource_group_name          = azurerm_resource_group.rg.name
+    allocation_method            = "Static"
+    tags = {
+        platform = var.tag-platform
+        stage = var.tag-stage
+        data-classification = var.tag-data-classification
+    }
+}
+
+resource "azurerm_public_ip" "relay1pip" {
+    name                         = "${var.resource-prefix}-relay1pip"
     location                     = var.pool-location
     resource_group_name          = azurerm_resource_group.rg.name
     allocation_method            = "Static"
@@ -92,7 +104,7 @@ resource "azurerm_network_security_group" "corensg" {
         protocol                   = "Tcp"
         source_port_range          = "*"
         destination_port_range     = var.core-node-port
-        source_address_prefix      = azurerm_public_ip.relaypip.ip_address
+        source_address_prefixes    = [azurerm_public_ip.relay0pip.ip_address,azurerm_public_ip.relay1pip.ip_address]
         destination_address_prefix = "*"
     }
     tags = {
@@ -154,16 +166,34 @@ resource "azurerm_network_interface" "corenic" {
     }
 }
 
-resource "azurerm_network_interface" "relaynic" {
-    name                      = "${var.resource-prefix}-relaynic"
+resource "azurerm_network_interface" "relay0nic" {
+    name                      = "${var.resource-prefix}-relay0nic"
     location                  = var.pool-location
     resource_group_name       = azurerm_resource_group.rg.name
     enable_accelerated_networking = var.relayvm-nic-accelerated-networking
     ip_configuration {
-        name                          = "relaynic-ipconfig"
+        name                          = "relay0nic-ipconfig"
         subnet_id                     = azurerm_subnet.relaysnet.id
         private_ip_address_allocation = "Dynamic"
-        public_ip_address_id          = azurerm_public_ip.relaypip.id
+        public_ip_address_id          = azurerm_public_ip.relay0pip.id
+    }
+    tags = {
+        platform = var.tag-platform
+        stage = var.tag-stage
+        data-classification = var.tag-data-classification
+    }
+}
+
+resource "azurerm_network_interface" "relay1nic" {
+    name                      = "${var.resource-prefix}-relay1nic"
+    location                  = var.pool-location
+    resource_group_name       = azurerm_resource_group.rg.name
+    enable_accelerated_networking = var.relayvm-nic-accelerated-networking
+    ip_configuration {
+        name                          = "relay1nic-ipconfig"
+        subnet_id                     = azurerm_subnet.relaysnet.id
+        private_ip_address_allocation = "Dynamic"
+        public_ip_address_id          = azurerm_public_ip.relay1pip.id
     }
     tags = {
         platform = var.tag-platform
@@ -178,8 +208,13 @@ resource "azurerm_network_interface_security_group_association" "corenicnsg" {
     network_security_group_id = azurerm_network_security_group.corensg.id
 }
 
-resource "azurerm_network_interface_security_group_association" "relaynicnsg" {
-    network_interface_id      = azurerm_network_interface.relaynic.id
+resource "azurerm_network_interface_security_group_association" "relay0nicnsg" {
+    network_interface_id      = azurerm_network_interface.relay0nic.id
+    network_security_group_id = azurerm_network_security_group.relaynsg.id
+}
+
+resource "azurerm_network_interface_security_group_association" "relay1nicnsg" {
+    network_interface_id      = azurerm_network_interface.relay1nic.id
     network_security_group_id = azurerm_network_security_group.relaynsg.id
 }
 
@@ -243,15 +278,15 @@ resource "azurerm_linux_virtual_machine" "corevm" {
     }
 }
 
-resource "azurerm_linux_virtual_machine" "relayvm" {
-    name                  = "${var.resource-prefix}-relayvm"
+resource "azurerm_linux_virtual_machine" "relay0vm" {
+    name                  = "${var.resource-prefix}-relay0vm"
     location              = var.pool-location
     resource_group_name   = azurerm_resource_group.rg.name
-    network_interface_ids = [azurerm_network_interface.relaynic.id]
+    network_interface_ids = [azurerm_network_interface.relay0nic.id]
     size                  = var.relayvm-size
 
     os_disk {
-        name              = "${var.resource-prefix}-relayvm-osdisk"
+        name              = "${var.resource-prefix}-relay0vm-osdisk"
         caching           = "ReadWrite"
         storage_account_type = "Premium_LRS"
         disk_size_gb = "128"
@@ -264,7 +299,46 @@ resource "azurerm_linux_virtual_machine" "relayvm" {
         version   = "latest"
     }
 
-    computer_name  = var.relayvm-comp-name
+    computer_name  = "${var.relayvm-comp-name}0"
+    admin_username = var.vm-username
+    disable_password_authentication = true
+        
+    admin_ssh_key {
+        username       = var.vm-username
+        public_key     = tls_private_key.sshkey.public_key_openssh
+    }
+    boot_diagnostics {
+        storage_account_uri = azurerm_storage_account.storage.primary_blob_endpoint
+    }
+    tags = {
+        platform = var.tag-platform
+        stage = var.tag-stage
+        data-classification = var.tag-data-classification
+    }
+}
+
+resource "azurerm_linux_virtual_machine" "relay1vm" {
+    name                  = "${var.resource-prefix}-relay1vm"
+    location              = var.pool-location
+    resource_group_name   = azurerm_resource_group.rg.name
+    network_interface_ids = [azurerm_network_interface.relay1nic.id]
+    size                  = var.relayvm-size
+
+    os_disk {
+        name              = "${var.resource-prefix}-relay1vm-osdisk"
+        caching           = "ReadWrite"
+        storage_account_type = "Premium_LRS"
+        disk_size_gb = "128"
+    }
+
+    source_image_reference {
+        publisher = "Canonical"
+        offer     = "UbuntuServer"
+        sku       = "18.04-LTS"
+        version   = "latest"
+    }
+
+    computer_name  = "${var.relayvm-comp-name}1"
     admin_username = var.vm-username
     disable_password_authentication = true
         
@@ -330,8 +404,14 @@ output "cpip" {
   sensitive   = false
 }
 
-output "rpip" {
-  value       = azurerm_public_ip.relaypip.ip_address
+output "r0pip" {
+  value       = azurerm_public_ip.relay0pip.ip_address
+  description = "Relay VM Public IP Address"
+  sensitive   = false
+}
+
+output "r1pip" {
+  value       = azurerm_public_ip.relay1pip.ip_address
   description = "Relay VM Public IP Address"
   sensitive   = false
 }

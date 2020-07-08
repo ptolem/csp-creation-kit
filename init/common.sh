@@ -13,6 +13,14 @@ echo '========================================================='
 sudo unattended-upgrade
 
 echo '========================================================='
+echo 'Optimising sysctl.conf and chrony'
+echo '========================================================='
+sudo cp ~/git/csp-creation-kit/init/sysctl.conf /etc/sysctl.conf
+sudo cp ~/git/csp-creation-kit/init/chrony.conf /etc/chrony/chrony.conf
+sudo sysctl --system
+sudo systemctl restart chrony
+
+echo '========================================================='
 echo 'Installing Cabal'
 echo '========================================================='
 cd $HOME
@@ -50,8 +58,6 @@ git checkout release/1.14.x
 echo -e "package cardano-crypto-praos\n  flags: -external-libsodium-vrf" > cabal.project.local
 ~/.local/bin/cabal install cardano-node cardano-cli --installdir="$HOME/.local/bin/" # Takes 15+ mins first time around
 
-#sudo cp ~/git/csp-creation-kit/init/sysctl.conf /etc/sysctl.conf
-
 echo '========================================================='
 echo 'Generating node artefacts - genesis, config and topology'
 echo '========================================================='
@@ -71,5 +77,4 @@ echo 'Updating PATH to binaries and setting socket env variable'
 echo '========================================================='
 echo 'export PATH="~/.cabal/bin:$PATH"' >> ~/.bashrc
 echo 'export PATH="~/.local/bin:$PATH"' >> ~/.bashrc
-
 echo 'export CARDANO_NODE_SOCKET_PATH=/home/ss/node/socket/node.socket' >> ~/.bashrc
